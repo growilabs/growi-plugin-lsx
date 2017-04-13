@@ -1,18 +1,23 @@
 module.exports = (crowi, app) => {
   var debug = require('debug')('crowi-plugin:lsx:routes:lsx')
-    , path = require('path')
-    , LsxPageListRenderer = require('../util/LsxPageListRenderer')
-    , lsx = new LsxPageListRenderer(crowi, app)
+    , Page = crowi.model('Page')
     , ApiResponse = crowi.require('../util/apiResponse')
     , actions = {};
 
-  actions.renderHtml = (req, res) => {
-    lsx.renderHtml(req.user, req.query.fromPagePath, req.query.args)
-      .then((html) => {
-        return res.json(ApiResponse.success({html}));
+  actions.listPages = (req, res) => {
+    let user = req.user;
+    let pagePath = req.query.pagePath;
+    let queryOptions = req.query.queryOptions;
+
+    // find pages
+    Page.generateQueryToListByStartWith(pagePath, user, queryOptions)
+      .populate('revision', '-body')  // exclude body
+      .exec()
+      .then((pages) => {
+        res.json(ApiResponse.success({pages}));
       })
       .catch((err) => {
-        debug('Error on rendering lsx.renderHtml', err);
+        debug('Error on lsx.listPages', err);
         return res.json(ApiResponse.error(err));
       });
   }

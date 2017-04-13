@@ -1,9 +1,12 @@
 import React from 'react';
+import urlgrey from 'urlgrey';
 
 import styles from '../../css/index.css';
 
 import { LsxContext } from '../util/LsxContext';
 import { LsxCacheHelper } from '../util/LsxCacheHelper';
+import { PageNode } from './PageNode';
+import { ListView } from './PageList/ListView';
 
 export class Lsx extends React.Component {
 
@@ -12,8 +15,8 @@ export class Lsx extends React.Component {
 
     this.state = {
       isLoading: true,
-      html: '',
       isError: false,
+      nodeTree: undefined,
       errorMessage: '',
     };
   }
@@ -23,7 +26,7 @@ export class Lsx extends React.Component {
     if (this.props.lsxStateCache) {
       this.setState({
         isLoading: false,
-        html: this.props.lsxStateCache.html,
+        nodeTree: this.props.lsxStateCache.nodeTree,
         isError: this.props.lsxStateCache.isError,
         errorMessage: this.props.lsxStateCache.errorMessage,
       });
@@ -31,23 +34,23 @@ export class Lsx extends React.Component {
     }
 
     const lsxContext = this.props.lsxContext;
-    const fromPagePath = lsxContext.fromPagePath;
-    const args = lsxContext.lsxArgs;
+    lsxContext.parse();
 
-    this.props.crowi.apiGet('/plugins/lsx', {fromPagePath, args})
+    let pagePath = lsxContext.pagePath;
+
+    this.props.crowi.apiGet('/plugins/lsx', {pagePath, queryOptions: ''})
+      .catch(error => {
+        const errorMessage = error.response.data.error.message;
+        this.setState({ isError: true, errorMessage: errorMessage });
+      })
       .then((res) => {
         if (res.ok) {
-          this.setState({ html: res.html });
+          const nodeTree = this.generatePageNodeTree(pagePath, res.pages);
+          this.setState({ nodeTree });
         }
         else {
           return Promise.reject(res.error);
         }
-      })
-      .catch(error => {
-        console.error(error);
-        const errorMessage = error.response.data.error.message;
-        console.error(errorMessage);
-        this.setState({ isError: true, errorMessage: errorMessage });
       })
       // finally
       .then(() => {
@@ -59,8 +62,85 @@ export class Lsx extends React.Component {
       })
   }
 
-  getInnerHTMLObj() {
-    return { __html: this.state.html };
+  /**
+   * generate tree structure
+   *
+   * @param {string} rootPagePath
+   * @param {Page[]} pages Array of Page model
+   *
+   * @memberOf Lsx
+   */
+  generatePageNodeTree(rootPagePath, pages) {
+    let pathToNodeMap = {};
+
+    pages.forEach((page) => {
+      // add slash ensure not to forward match to another page
+      // ex: '/Java/' not to match to '/JavaScript'
+      const pagePath = this.addSlashOfEnd(page.path);
+
+      // exclude rootPagePath itself
+      if (this.isEquals(pagePath, rootPagePath)) {
+        return;
+      }
+
+      const node = pathToNodeMap[pagePath] || new PageNode();
+      node.page = page;
+      pathToNodeMap[pagePath] = node;
+
+      // get or create parent node
+      const parentPath = this.getParentPath(pagePath);
+      // associate to patent but exclude direct child of rootPagePath
+      if (!this.isEquals(parentPath, rootPagePath)) {
+        let parentNode = pathToNodeMap[parentPath];
+        if (parentNode === undefined) {
+          parentNode = new PageNode();
+          pathToNodeMap[parentPath] = parentNode;
+        }
+        // associate to patent
+        parentNode.children.push(node);
+      }
+    });
+
+    // return root objects
+    return Object.values(pathToNodeMap).filter((node) => {
+      const parentPath = this.getParentPath(node.page.path);
+      return !(parentPath in pathToNodeMap);
+    });
+  }
+
+  /**
+   * return path that added slash to the end for specified path
+   *
+   * @param {string} path
+   * @returns
+   *
+   * @memberOf LsxContext
+   */
+  addSlashOfEnd(path) {
+    let returnPath = path;
+    if (!path.match(/\/$/)) {
+      returnPath += '/';
+    }
+    return returnPath;
+  }
+
+  /**
+   * addSlashOfEnd and compare whether path1 and path2 is the same
+   *
+   * @param {string} path1
+   * @param {string} path2
+   * @returns
+   *
+   * @memberOf Lsx
+   */
+  isEquals(path1, path2) {
+    return this.addSlashOfEnd(path1) === this.addSlashOfEnd(path2)
+  }
+
+  getParentPath(path) {
+    const parent = urlgrey(path).parent();
+    return decodeURIComponent(this.addSlashOfEnd(parent.path()));
+
   }
 
   render() {
@@ -82,9 +162,9 @@ export class Lsx extends React.Component {
         </div>
       )
     }
+    // render tree
     else {
-      const innerHtml = this.getInnerHTMLObj();
-      return <div dangerouslySetInnerHTML={innerHtml} />
+      return <ListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />
     }
   }
 }
