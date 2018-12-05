@@ -135,16 +135,11 @@ module.exports = (crowi, app) => {
 
     let promisifiedBuilder = Promise.resolve(builder);
 
-    // add grant conditions
-    if (user != null) {
-      const UserGroupRelation = crowi.model('UserGroupRelation');
-      promisifiedBuilder = UserGroupRelation.findAllUserGroupIdsRelatedToUser(user)
-        .then(userGroups => {
-          return builder.addConditionToFilteringByViewer(user, userGroups);
-        });
-    }
-
-    return promisifiedBuilder;
+    return promisifiedBuilder
+      // add grant conditions
+      .then(builder => {
+        return Page.addConditionToFilteringByViewerForList(builder, user);
+      });
   }
 
   actions.listPages = (req, res) => {
