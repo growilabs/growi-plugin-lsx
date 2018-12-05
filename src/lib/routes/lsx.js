@@ -133,15 +133,7 @@ module.exports = (crowi, app) => {
       .addConditionToExcludeTrashed()
       .addConditionToExcludeRedirect();
 
-    let promisifiedBuilder = Promise.resolve(builder);
-
-    if (user != null) {
-      const UserGroupRelation = crowi.model('UserGroupRelation');
-      const userGroups = await UserGroupRelation.findAllUserGroupIdsRelatedToUser(user);
-      promisifiedBuilder = builder.addConditionToFilteringByViewer(user, userGroups);
-    }
-
-    return promisifiedBuilder;
+    return Page.addConditionToFilteringByViewerForList(builder, user);
   }
 
   actions.listPages = async(req, res) => {
