@@ -60,6 +60,23 @@ class Lsx {
   }
 
   /**
+   * add filter condition that filter fetched pages
+   *
+   * @static
+   * @param {any} query
+   * @param {any} pagePath
+   * @param {any} optionsFilter
+   * @returns
+   *
+   * @memberOf Lsx
+   */
+  static addFilterCondition(query, pagePath, optionsFilter) {
+    return query.and({
+      path: new RegExp(optionsFilter)
+    });
+  }
+
+  /**
    * add sort condition(sort key & sort order)
    *
    * If only the reverse option is specified, the sort key is 'path'.
@@ -158,6 +175,10 @@ module.exports = (crowi, app) => {
           // num
           if (options.num != null) {
             query = Lsx.addNumCondition(query, pagePath, options.num);
+          }
+          // filter
+          if (options.filter != null) {
+            query = Lsx.addFilterCondition(query, pagePath, options.filter);
           }
           // sort
           query = Lsx.addSortCondition(query, pagePath, options.sort, options.reverse);
