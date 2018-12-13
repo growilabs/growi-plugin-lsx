@@ -71,21 +71,8 @@ class Lsx {
    * @memberOf Lsx
    */
   static addFilterCondition(query, pagePath, optionsFilter) {
-    const range = OptionParser.parseRange(optionsFilter);
-    const start = range.start;
-    const end = range.end;
-
-    if (start < 1 || end < 1) {
-      throw new Error(`specified depth is [${start}:${end}] : start and end are must be larger than 1`);
-    }
-
-    // count slash
-    const slashNum = pagePath.split('/').length - 1;
-    const depthStart = slashNum; // start is not affect to fetch page
-    const depthEnd = slashNum + end - 1;
-
     return query.and({
-      path: new RegExp(`^(\\/[^\\/]*){${depthStart},${depthEnd}}$`)
+      path: new RegExp(optionsFilter)
     });
   }
 
