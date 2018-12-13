@@ -60,6 +60,36 @@ class Lsx {
   }
 
   /**
+   * add filter condition that reg exp filter fetched pages
+   *
+   * @static
+   * @param {any} query
+   * @param {any} pagePath
+   * @param {any} optionsFilter
+   * @returns
+   *
+   * @memberOf Lsx
+   */
+  static addFilterCondition(query, pagePath, optionsFilter) {
+    const range = OptionParser.parseRange(optionsFilter);
+    const start = range.start;
+    const end = range.end;
+
+    if (start < 1 || end < 1) {
+      throw new Error(`specified depth is [${start}:${end}] : start and end are must be larger than 1`);
+    }
+
+    // count slash
+    const slashNum = pagePath.split('/').length - 1;
+    const depthStart = slashNum; // start is not affect to fetch page
+    const depthEnd = slashNum + end - 1;
+
+    return query.and({
+      path: new RegExp(`^(\\/[^\\/]*){${depthStart},${depthEnd}}$`)
+    });
+  }
+
+  /**
    * add sort condition(sort key & sort order)
    *
    * If only the reverse option is specified, the sort key is 'path'.
@@ -158,6 +188,10 @@ module.exports = (crowi, app) => {
           // num
           if (options.num != null) {
             query = Lsx.addNumCondition(query, pagePath, options.num);
+          }
+          // filter
+          if (options.filter != null) {
+            query = Lsx.addFilterCondition(query, pagePath, options.filter);
           }
           // sort
           query = Lsx.addSortCondition(query, pagePath, options.sort, options.reverse);
