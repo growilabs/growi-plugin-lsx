@@ -71,9 +71,14 @@ class Lsx {
    * @memberOf Lsx
    */
   static addFilterCondition(query, pagePath, optionsFilter) {
-    return query.and({
-      path: new RegExp(optionsFilter)
-    });
+    try {
+      return query.and({
+        path: new RegExp(optionsFilter)
+      });
+    }
+    catch (e) {
+      throw new Error(e);
+    }
   }
 
   /**
