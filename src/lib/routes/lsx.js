@@ -71,8 +71,17 @@ class Lsx {
    * @memberOf Lsx
    */
   static addFilterCondition(query, pagePath, optionsFilter) {
+    let filterPath = '';
+    if (optionsFilter.charAt(0) =='^') {
+      filterPath = new RegExp(`${pagePath}.*${optionsFilter}`, 'y');
+      filterPath.lastIndex = pagePath.length;
+    }
+    else {
+      filterPath = new RegExp(`${pagePath}.*${optionsFilter}`);
+    }
+console.log(filterPath);
     return query.and({
-      path: new RegExp(optionsFilter)
+      path: filterPath
     });
   }
 
