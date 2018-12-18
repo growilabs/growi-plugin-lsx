@@ -71,15 +71,13 @@ class Lsx {
    * @memberOf Lsx
    */
   static addFilterCondition(query, pagePath, optionsFilter) {
-    let filterPath = '';
-    if (optionsFilter.charAt(0) =='^') {
-      filterPath = new RegExp(`${pagePath}.*${optionsFilter}`, 'y');
-      filterPath.lastIndex = pagePath.length;
+    var filterPath = '';
+    if (optionsFilter.charAt(0) == '^') {
+      // ^をpathの先頭に移動
+      filterPath = new RegExp('^' + pagePath + optionsFilter.slice(1, optionsFilter.length));
+    } else {
+      filterPath = new RegExp(pagePath + '.*' + optionsFilter);
     }
-    else {
-      filterPath = new RegExp(`${pagePath}.*${optionsFilter}`);
-    }
-console.log(filterPath);
     return query.and({
       path: filterPath
     });
