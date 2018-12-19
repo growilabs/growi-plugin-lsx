@@ -71,8 +71,21 @@ class Lsx {
    * @memberOf Lsx
    */
   static addFilterCondition(query, pagePath, optionsFilter) {
+    // whan value of filter option is empty, optionsFilter is true
+    if (optionsFilter == null || optionsFilter == true) {
+      throw new Error('filter option require value in regular expression.');
+    }
+
+    let filterPath = '';
+    if (optionsFilter.charAt(0) === '^') {
+      // move '^' to the first of path
+      filterPath = new RegExp('^' + pagePath + optionsFilter.slice(1, optionsFilter.length));
+    }
+    else {
+      filterPath = new RegExp('^' + pagePath + '.*' + optionsFilter);
+    }
     return query.and({
-      path: new RegExp(optionsFilter)
+      path: filterPath
     });
   }
 
