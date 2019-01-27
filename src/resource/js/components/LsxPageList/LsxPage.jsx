@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import PageListMeta from '@client/js/components/PageList/PageListMeta';
+
 import { LsxContext } from '../../util/LsxContext';
-import { PageListMeta } from './PageListMeta';
-import { PagePath } from './PagePath';
 import { PageNode } from '../PageNode';
 
-export class Page extends React.Component {
+import { PagePathWrapper } from './PagePathWrapper';
+
+export class LsxPage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -53,7 +55,7 @@ export class Page extends React.Component {
     if (this.state.hasChildren) {
       const pages = pageNode.children.map((pageNode) => {
         return (
-          <Page key={pageNode.pagePath} depth={this.props.depth + 1}
+          <LsxPage key={pageNode.pagePath} depth={this.props.depth + 1}
             pageNode={pageNode}
             lsxContext={this.props.lsxContext}
           />
@@ -63,13 +65,13 @@ export class Page extends React.Component {
       element = <ul className="page-list-ul">{pages}</ul>;
     }
 
-    return element
+    return element;
   }
 
   getIconElement() {
     return (this.state.isExists)
-        ? <i className="ti-agenda" aria-hidden="true"></i>
-        : <i className="ti-file lsx-page-not-exist" aria-hidden="true"></i>;
+      ? <i className="ti-agenda" aria-hidden="true"></i>
+      : <i className="ti-file lsx-page-not-exist" aria-hidden="true"></i>;
   }
 
   /**
@@ -88,7 +90,7 @@ export class Page extends React.Component {
     const pageNode = this.props.pageNode;
 
     // create PagePath element
-    let pagePathNode = <PagePath pagePath={pageNode.pagePath} isExists={this.state.isExists} />;
+    let pagePathNode = <PagePathWrapper pagePath={pageNode.pagePath} isExists={this.state.isExists} />;
     if (this.state.isLinkable) {
       pagePathNode = <a className="page-list-link" href={this.omitSlashOfEnd(pageNode.pagePath)}>{pagePathNode}</a>;
     }
@@ -105,7 +107,7 @@ export class Page extends React.Component {
   }
 }
 
-Page.propTypes = {
+LsxPage.propTypes = {
   pageNode: PropTypes.instanceOf(PageNode).isRequired,
   lsxContext: PropTypes.instanceOf(LsxContext).isRequired,
   depth: PropTypes.number,

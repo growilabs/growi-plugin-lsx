@@ -8,7 +8,8 @@ import styles from '../../css/index.css';
 import { LsxContext } from '../util/LsxContext';
 import { LsxCacheHelper } from '../util/LsxCacheHelper';
 import { PageNode } from './PageNode';
-import { ListView } from './PageList/ListView';
+import { LsxListView } from './LsxPageList/LsxListView';
+
 
 export class Lsx extends React.Component {
 
@@ -62,7 +63,7 @@ export class Lsx extends React.Component {
         // store to sessionStorage
         const cacheKey = LsxCacheHelper.generateCacheKeyFromContext(lsxContext);
         LsxCacheHelper.cacheState(cacheKey, this.state);
-      })
+      });
   }
 
   /**
@@ -197,16 +198,16 @@ export class Lsx extends React.Component {
           <i className="fa fa-exclamation-triangle fa-fw"></i>
           {lsxContext.tagExpression} (-> <small>{this.state.errorMessage}</small>)
         </div>
-      )
+      );
     }
     // render tree
     else {
-      return <ListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />
+      return <LsxListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />;
     }
   }
 
   render() {
-    return <div className="lsx">{this.renderContents()}</div>
+    return <div className="lsx">{this.renderContents()}</div>;
   }
 }
 
