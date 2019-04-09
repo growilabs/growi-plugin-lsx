@@ -11,6 +11,11 @@
     "src"
   ],
   "scripts": {
+    "lint:js:fix": "eslint **/*.{js,jsx} --fix",
+    "lint:js": "eslint **/*.{js,jsx}",
+    "lint:styles:fix": "prettier-stylelint --quiet --write src/**/*.scss",
+    "lint:styles": "stylelint src/**/*.scss",
+    "lint": "npm-run-all -p lint:js lint:styles",
     "test": ""
   },
   "repository": "https://github.com/weseek/growi-plugin-lsx.git",
@@ -25,12 +30,16 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "babel-preset-env": "^1.6.0",
+    "babel-eslint": "^10.0.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "eslint": "^5.9.0",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint": "^5.15.1",
+    "eslint-config-weseek": "^1.0.1",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-react": "^7.12.4",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "prettier-stylelint": "^0.4.2"
   },
   "engines": {
     "node": ">=8.11.1 <11",
