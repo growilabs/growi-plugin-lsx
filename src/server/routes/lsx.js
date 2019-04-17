@@ -14,6 +14,11 @@ class Lsx {
    * @memberOf Lsx
    */
   static addDepthCondition(query, pagePath, optionsDepth) {
+    // when option strings is 'depth=', the option value is true
+    if (optionsDepth == null || optionsDepth === true) {
+      throw new Error('The value of depth option is invalid.');
+    }
+
     const range = OptionParser.parseRange(optionsDepth);
     const start = range.start;
     const end = range.end;
@@ -44,6 +49,11 @@ class Lsx {
    * @memberOf Lsx
    */
   static addNumCondition(query, pagePath, optionsNum) {
+    // when option strings is 'num=', the option value is true
+    if (optionsNum == null || optionsNum === true) {
+      throw new Error('The value of num option is invalid.');
+    }
+
     const range = OptionParser.parseRange(optionsNum);
     const start = range.start;
     const end = range.end;
@@ -70,8 +80,8 @@ class Lsx {
    * @memberOf Lsx
    */
   static addFilterCondition(query, pagePath, optionsFilter) {
-    // whan value of filter option is empty, optionsFilter is true
-    if (optionsFilter == null || optionsFilter == true) {
+    // when option strings is 'filter=', the option value is true
+    if (optionsFilter == null || optionsFilter === true) {
       throw new Error('filter option require value in regular expression.');
     }
 
