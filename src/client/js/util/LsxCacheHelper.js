@@ -31,7 +31,7 @@ export class LsxCacheHelper {
    * @memberOf LsxCacheHelper
    */
   static generateCacheKeyFromContext(lsxContext) {
-    return `${lsxContext.fromPagePath}__${lsxContext.lsxArgs}`;
+    return `${lsxContext.currentPagePath}__${lsxContext.args}`;
   }
 
   /**

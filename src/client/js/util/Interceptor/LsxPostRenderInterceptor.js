@@ -5,6 +5,7 @@ import { BasicInterceptor } from 'growi-commons';
 
 import { Lsx } from '../../components/Lsx';
 import { LsxCacheHelper } from '../LsxCacheHelper';
+import { LsxContext } from 'growi-plugin-lsx/src/client/js/util/LsxContext';
 
 /**
  * The interceptor for lsx
@@ -34,13 +35,18 @@ export class LsxPostRenderInterceptor extends BasicInterceptor {
   process(contextName, ...args) {
     const context = Object.assign(args[0]);   // clone
 
-    // forEach keys of lsxContextMap
-    Object.keys(context.lsxContextMap).forEach((renderId) => {
-      const elem = document.getElementById(renderId);
+    // forEach keys of tagContextMap
+    Object.keys(context.tagContextMap).forEach((domId) => {
+      const elem = document.getElementById(domId);
 
       if (elem) {
-        // get LsxContext instance from context
-        let lsxContext = context.lsxContextMap[renderId];
+        // get TagContext instance from context
+        const tagContext = context.tagContextMap[domId];
+        // create LsxContext instance
+        const lsxContext = new LsxContext();
+        lsxContext.tagExpression = tagContext.tagExpression;
+        lsxContext.args = tagContext.args;
+        lsxContext.fromPagePath = context.currentPagePath;
 
         // check cache exists
         const cacheKey = LsxCacheHelper.generateCacheKeyFromContext(lsxContext);

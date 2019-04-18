@@ -1,14 +1,16 @@
 import * as url from 'url';
 
-import { ArgsParser, OptionParser, pathUtils } from 'growi-commons';
+import { customTagUtils, pathUtils } from 'growi-commons';
+
+const { ArgsParser, OptionParser } = customTagUtils;
 
 export class LsxContext {
 
   constructor() {
-    this.currentPagePath = null;
     this.tagExpression = null;
+    this.args = null;
+
     this.fromPagePath = null;
-    this.lsxArgs = null;
 
     // initialized after parse()
     this.isParsed = null;
@@ -24,7 +26,7 @@ export class LsxContext {
     // initialize
     let specifiedPath;
 
-    const parsedResult = ArgsParser.parse(this.lsxArgs);
+    const parsedResult = ArgsParser.parse(this.args);
     this.options = parsedResult.options;
 
     // determine specifiedPath
