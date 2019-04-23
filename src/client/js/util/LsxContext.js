@@ -2,13 +2,15 @@ import * as url from 'url';
 
 import { customTagUtils, pathUtils } from 'growi-commons';
 
-const { ArgsParser, OptionParser } = customTagUtils;
+const { TagContext, ArgsParser, OptionParser } = customTagUtils;
 
-export class LsxContext {
+export class LsxContext extends TagContext {
 
-  constructor() {
-    this.tagExpression = null;
-    this.args = null;
+  /**
+   * @param {object|TagContext|LsxContext} initArgs
+   */
+  constructor(initArgs) {
+    super(initArgs);
 
     this.fromPagePath = null;
 

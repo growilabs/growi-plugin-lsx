@@ -41,11 +41,9 @@ export class LsxPostRenderInterceptor extends BasicInterceptor {
 
       if (elem) {
         // get TagContext instance from context
-        const tagContext = context.tagContextMap[domId];
+        const tagContext = context.tagContextMap[domId] || {};
         // create LsxContext instance
-        const lsxContext = new LsxContext();
-        lsxContext.tagExpression = tagContext.tagExpression;
-        lsxContext.args = tagContext.args;
+        const lsxContext = new LsxContext(tagContext);
         lsxContext.fromPagePath = context.currentPagePath;
 
         // check cache exists
