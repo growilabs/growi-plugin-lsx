@@ -1,25 +1,10 @@
+import { LocalStorageManager } from 'growi-commons';
+
 import { PageNode } from '../components/PageNode';
 
+const LSX_STATE_CACHE_NS = 'lsx-state-cache';
+
 export class LsxCacheHelper {
-
-  /**
-   * @private
-   */
-  static retrieveFromSessionStorage() {
-    return JSON.parse(sessionStorage.getItem('lsx-cache')) || {};
-  }
-
-  /**
-   * stringify and save obj
-   *
-   * @static
-   * @param {object} cacheObj
-   *
-   * @memberOf LsxCacheHelper
-   */
-  static saveToSessionStorage(cacheObj) {
-    sessionStorage.setItem('lsx-cache', JSON.stringify(cacheObj));
-  }
 
   /**
    * generate cache key for storing to storage
@@ -44,8 +29,9 @@ export class LsxCacheHelper {
    * @memberOf LsxCacheHelper
    */
   static getStateCache(key) {
-    const cacheObj = LsxCacheHelper.retrieveFromSessionStorage();
-    const stateCache = cacheObj[key];
+    const localStorageManager = LocalStorageManager.getInstance();
+
+    const stateCache = localStorageManager.retrieveFromSessionStorage(LSX_STATE_CACHE_NS, key);
 
     if (stateCache != null && stateCache.nodeTree != null) {
       // instanciate PageNode
@@ -67,10 +53,8 @@ export class LsxCacheHelper {
    * @memberOf LsxCacheHelper
    */
   static cacheState(key, lsxState) {
-    let cacheObj = LsxCacheHelper.retrieveFromSessionStorage();
-    cacheObj[key] = lsxState;
-
-    LsxCacheHelper.saveToSessionStorage(cacheObj);
+    const localStorageManager = LocalStorageManager.getInstance();
+    localStorageManager.saveToSessionStorage(LSX_STATE_CACHE_NS, key, lsxState);
   }
 
   /**
@@ -81,6 +65,7 @@ export class LsxCacheHelper {
    * @memberOf LsxCacheHelper
    */
   static clearAllStateCaches() {
-    LsxCacheHelper.saveToSessionStorage({});
+    const localStorageManager = LocalStorageManager.getInstance();
+    localStorageManager.saveToSessionStorage(LSX_STATE_CACHE_NS, {});
   }
 }

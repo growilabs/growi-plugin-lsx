@@ -13,7 +13,6 @@ import { LsxCacheHelper } from '../util/LsxCacheHelper';
 import { PageNode } from './PageNode';
 import { LsxListView } from './LsxPageList/LsxListView';
 
-
 export class Lsx extends React.Component {
 
   constructor(props) {
