@@ -17,7 +17,7 @@ export class LsxContext extends TagContext {
     // initialized after parse()
     this.isParsed = null;
     this.pagePath = null;
-    this.options = null;
+    this.options = {};
   }
 
   parse() {

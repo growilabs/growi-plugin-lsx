@@ -29,18 +29,22 @@ export class Lsx extends React.Component {
   // eslint-disable-next-line react/no-deprecated
   componentWillMount() {
     const lsxContext = this.props.lsxContext;
-    lsxContext.parse();
+
+    // get state object cache
+    const stateCache = LsxCacheHelper.getStateCache(lsxContext);
 
     // check cache exists
-    if (this.props.lsxStateCache) {
+    if (stateCache != null) {
       this.setState({
         isLoading: false,
-        nodeTree: this.props.lsxStateCache.nodeTree,
-        isError: this.props.lsxStateCache.isError,
-        errorMessage: this.props.lsxStateCache.errorMessage,
+        nodeTree: stateCache.nodeTree,
+        isError: stateCache.isError,
+        errorMessage: stateCache.errorMessage,
       });
       return;   // go to render()
     }
+
+    lsxContext.parse();
 
     // add slash ensure not to forward match to another page
     // ex: '/Java/' not to match to '/JavaScript'
@@ -64,8 +68,7 @@ export class Lsx extends React.Component {
         this.setState({ isLoading: false });
 
         // store to sessionStorage
-        const cacheKey = LsxCacheHelper.generateCacheKeyFromContext(lsxContext);
-        LsxCacheHelper.cacheState(cacheKey, this.state);
+        LsxCacheHelper.cacheState(lsxContext, this.state);
       });
   }
 
@@ -200,7 +203,5 @@ export class Lsx extends React.Component {
 
 Lsx.propTypes = {
   crowi: PropTypes.object.isRequired,
-
   lsxContext: PropTypes.instanceOf(LsxContext).isRequired,
-  lsxStateCache: PropTypes.object,
 };

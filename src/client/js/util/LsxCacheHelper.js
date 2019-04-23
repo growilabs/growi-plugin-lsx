@@ -1,5 +1,8 @@
 import { LocalStorageManager } from 'growi-commons';
 
+// eslint-disable-next-line no-unused-vars
+import LsxContext from './LsxContext';
+
 import { PageNode } from '../components/PageNode';
 
 const LSX_STATE_CACHE_NS = 'lsx-state-cache';
@@ -9,28 +12,25 @@ export class LsxCacheHelper {
   /**
    * generate cache key for storing to storage
    *
-   * @static
-   * @param {LsxContext} lsxContext
-   * @returns
-   *
-   * @memberOf LsxCacheHelper
+   * @returns {LsxContext}
    */
-  static generateCacheKeyFromContext(lsxContext) {
-    return `${lsxContext.currentPagePath}__${lsxContext.args}`;
+  static generateCacheKey(lsxContext) {
+    return `${lsxContext.fromPagePath}__${lsxContext.args}`;
   }
 
   /**
    *
    *
    * @static
-   * @param {string} key
+   * @param {LsxContext} lsxContext
    * @returns
    *
    * @memberOf LsxCacheHelper
    */
-  static getStateCache(key) {
+  static getStateCache(lsxContext) {
     const localStorageManager = LocalStorageManager.getInstance();
 
+    const key = LsxCacheHelper.generateCacheKey(lsxContext);
     const stateCache = localStorageManager.retrieveFromSessionStorage(LSX_STATE_CACHE_NS, key);
 
     if (stateCache != null && stateCache.nodeTree != null) {
@@ -47,13 +47,14 @@ export class LsxCacheHelper {
    * store state object of React Component with specified key
    *
    * @static
-   * @param {string} key
+   * @param {LsxContext} lsxContext
    * @param {object} lsxState state object of React Component
    *
    * @memberOf LsxCacheHelper
    */
-  static cacheState(key, lsxState) {
+  static cacheState(lsxContext, lsxState) {
     const localStorageManager = LocalStorageManager.getInstance();
+    const key = LsxCacheHelper.generateCacheKey(lsxContext);
     localStorageManager.saveToSessionStorage(LSX_STATE_CACHE_NS, key, lsxState);
   }
 

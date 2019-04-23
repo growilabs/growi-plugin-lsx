@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { BasicInterceptor } from 'growi-commons';
 
 import { Lsx } from '../../components/Lsx';
-import { LsxCacheHelper } from '../LsxCacheHelper';
 import { LsxContext } from 'growi-plugin-lsx/src/client/js/util/LsxContext';
 
 /**
@@ -46,20 +45,16 @@ export class LsxPostRenderInterceptor extends BasicInterceptor {
         const lsxContext = new LsxContext(tagContext);
         lsxContext.fromPagePath = context.currentPagePath;
 
-        // check cache exists
-        const cacheKey = LsxCacheHelper.generateCacheKeyFromContext(lsxContext);
-        const lsxStateCache = LsxCacheHelper.getStateCache(cacheKey);
-
-        this.renderReactDOM(lsxContext, lsxStateCache, elem);
+        this.renderReactDOM(lsxContext, elem);
       }
     });
 
     return Promise.resolve();
   }
 
-  renderReactDOM(lsxContext, lsxStateCache, elem) {
+  renderReactDOM(lsxContext, elem) {
     ReactDOM.render(
-      <Lsx crowi={this.crowi} lsxContext={lsxContext} lsxStateCache={lsxStateCache} />,
+      <Lsx crowi={this.crowi} lsxContext={lsxContext} />,
       elem
     );
   }
