@@ -3,11 +3,11 @@ import { LocalStorageManager } from 'growi-commons';
 // eslint-disable-next-line no-unused-vars
 import LsxContext from './LsxContext';
 
-import { PageNode } from '../components/PageNode';
+import PageNode from '../components/PageNode';
 
 const LSX_STATE_CACHE_NS = 'lsx-state-cache';
 
-export class LsxCacheHelper {
+export default class LsxCacheHelper {
 
   /**
    * generate cache key for storing to storage
@@ -69,4 +69,5 @@ export class LsxCacheHelper {
     const localStorageManager = LocalStorageManager.getInstance();
     localStorageManager.saveToSessionStorage(LSX_STATE_CACHE_NS, {});
   }
+
 }

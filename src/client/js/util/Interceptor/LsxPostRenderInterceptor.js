@@ -3,15 +3,15 @@ import ReactDOM from 'react-dom';
 
 import { BasicInterceptor } from 'growi-commons';
 
-import { Lsx } from '../../components/Lsx';
-import { LsxContext } from 'growi-plugin-lsx/src/client/js/util/LsxContext';
+import LsxContext from 'growi-plugin-lsx/src/client/js/util/LsxContext';
+import Lsx from '../../components/Lsx';
 
 /**
  * The interceptor for lsx
  *
  *  render React DOM
  */
-export class LsxPostRenderInterceptor extends BasicInterceptor {
+export default class LsxPostRenderInterceptor extends BasicInterceptor {
 
   constructor(crowi) {
     super();
@@ -23,8 +23,8 @@ export class LsxPostRenderInterceptor extends BasicInterceptor {
    */
   isInterceptWhen(contextName) {
     return (
-      contextName === 'postRenderHtml' ||
-      contextName === 'postRenderPreviewHtml'
+      contextName === 'postRenderHtml'
+      || contextName === 'postRenderPreviewHtml'
     );
   }
 
@@ -32,7 +32,7 @@ export class LsxPostRenderInterceptor extends BasicInterceptor {
    * @inheritdoc
    */
   process(contextName, ...args) {
-    const context = Object.assign(args[0]);   // clone
+    const context = Object.assign(args[0]); // clone
 
     // forEach keys of tagContextMap
     Object.keys(context.tagContextMap).forEach((domId) => {
@@ -55,7 +55,7 @@ export class LsxPostRenderInterceptor extends BasicInterceptor {
   renderReactDOM(lsxContext, elem) {
     ReactDOM.render(
       <Lsx crowi={this.crowi} lsxContext={lsxContext} />,
-      elem
+      elem,
     );
   }
 

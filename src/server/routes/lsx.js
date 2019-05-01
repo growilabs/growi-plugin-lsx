@@ -1,4 +1,5 @@
 const { customTagUtils } = require('growi-commons');
+
 const { OptionParser } = customTagUtils;
 
 class Lsx {
@@ -30,11 +31,11 @@ class Lsx {
 
     // count slash
     const slashNum = pagePath.split('/').length - 1;
-    const depthStart = slashNum;            // start is not affect to fetch page
+    const depthStart = slashNum; // start is not affect to fetch page
     const depthEnd = slashNum + end - 1;
 
     return query.and({
-      path: new RegExp(`^(\\/[^\\/]*){${depthStart},${depthEnd}}$`)
+      path: new RegExp(`^(\\/[^\\/]*){${depthStart},${depthEnd}}$`),
     });
   }
 
@@ -89,13 +90,13 @@ class Lsx {
     let filterPath = '';
     if (optionsFilter.charAt(0) === '^') {
       // move '^' to the first of path
-      filterPath = new RegExp('^' + pagePath + optionsFilter.slice(1, optionsFilter.length));
+      filterPath = new RegExp(`^${pagePath}${optionsFilter.slice(1, optionsFilter.length)}`);
     }
     else {
-      filterPath = new RegExp('^' + pagePath + '.*' + optionsFilter);
+      filterPath = new RegExp(`^${pagePath}.*${optionsFilter}`);
     }
     return query.and({
-      path: filterPath
+      path: filterPath,
     });
   }
 
@@ -114,11 +115,9 @@ class Lsx {
    *
    * @memberOf Lsx
    */
-  static addSortCondition(query, pagePath, optionsSort, optionsReverse) {
-    // the default sort key
-    if (optionsSort == null) {
-      optionsSort = 'path';
-    }
+  static addSortCondition(query, pagePath, optionsSortArg, optionsReverse) {
+    // init sort key
+    const optionsSort = optionsSortArg || 'path';
 
     // the default sort order
     let isReversed = false;
@@ -136,16 +135,17 @@ class Lsx {
       isReversed = (optionsReverse === 'true');
     }
 
-    let sortOption = {};
+    const sortOption = {};
     sortOption[optionsSort] = isReversed ? -1 : 1;
     return query.sort(sortOption);
   }
+
 }
 
 module.exports = (crowi, app) => {
-  const Page = crowi.model('Page')
-    , ApiResponse = crowi.require('../util/apiResponse')
-    , actions = {};
+  const Page = crowi.model('Page');
+  const ApiResponse = crowi.require('../util/apiResponse');
+  const actions = {};
 
   /**
    *
@@ -157,7 +157,7 @@ module.exports = (crowi, app) => {
   async function generateBaseQueryBuilder(pagePath, user) {
     let baseQuery = Page.find();
     if (Page.PageQueryBuilder == null) {
-      if (Page.generateQueryToListWithDescendants != null) {  // for Backward compatibility (<= GROWI v3.2.x)
+      if (Page.generateQueryToListWithDescendants != null) { // for Backward compatibility (<= GROWI v3.2.x)
         baseQuery = Page.generateQueryToListWithDescendants(pagePath, user, {});
       }
       else if (Page.generateQueryToListByStartWith != null) { // for Backward compatibility (<= crowi-plus v2.0.7)
@@ -177,9 +177,9 @@ module.exports = (crowi, app) => {
   }
 
   actions.listPages = async(req, res) => {
-    let user = req.user;
-    let pagePath = req.query.pagePath;
-    let options = JSON.parse(req.query.options);
+    const user = req.user;
+    const pagePath = req.query.pagePath;
+    const options = JSON.parse(req.query.options);
 
     const builder = await generateBaseQueryBuilder(pagePath, user);
 
@@ -201,7 +201,7 @@ module.exports = (crowi, app) => {
       query = Lsx.addSortCondition(query, pagePath, options.sort, options.reverse);
 
       const pages = await query.exec();
-      res.json(ApiResponse.success({pages}));
+      res.json(ApiResponse.success({ pages }));
     }
     catch (error) {
       return res.json(ApiResponse.error(error));

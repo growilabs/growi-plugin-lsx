@@ -1,13 +1,13 @@
 import { customTagUtils, BasicInterceptor } from 'growi-commons';
 
-import { LsxCacheHelper } from '../LsxCacheHelper';
+import LsxCacheHelper from '../LsxCacheHelper';
 
 /**
  * The interceptor for lsx
  *
  *  replace lsx tag to a React target element
  */
-export class LsxPreRenderInterceptor extends BasicInterceptor {
+export default class LsxPreRenderInterceptor extends BasicInterceptor {
 
   constructor(crowi) {
     super();
@@ -20,8 +20,8 @@ export class LsxPreRenderInterceptor extends BasicInterceptor {
    */
   isInterceptWhen(contextName) {
     return (
-      contextName === 'preRenderHtml' ||
-      contextName === 'preRenderPreviewHtml'
+      contextName === 'preRenderHtml'
+      || contextName === 'preRenderPreviewHtml'
     );
   }
 
@@ -29,7 +29,7 @@ export class LsxPreRenderInterceptor extends BasicInterceptor {
    * @inheritdoc
    */
   process(contextName, ...args) {
-    const context = Object.assign(args[0]);   // clone
+    const context = Object.assign(args[0]); // clone
     const parsedHTML = context.parsedHTML;
     this.initializeCache(contextName);
 

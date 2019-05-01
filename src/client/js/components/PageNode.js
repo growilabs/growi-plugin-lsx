@@ -1,4 +1,4 @@
-export class PageNode {
+export default class PageNode {
 
   constructor(pagePath) {
     this.pagePath = pagePath;
@@ -32,7 +32,7 @@ export class PageNode {
   */
 
   static instanciateFrom(obj) {
-    let pageNode = new PageNode(obj.pagePath);
+    const pageNode = new PageNode(obj.pagePath);
     pageNode.page = obj.page;
 
     // instanciate recursively
@@ -42,4 +42,5 @@ export class PageNode {
 
     return pageNode;
   }
+
 }

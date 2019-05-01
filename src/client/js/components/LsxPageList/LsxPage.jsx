@@ -5,12 +5,12 @@ import { pathUtils } from 'growi-commons';
 
 import PageListMeta from '@client/js/components/PageList/PageListMeta';
 
-import { LsxContext } from '../../util/LsxContext';
-import { PageNode } from '../PageNode';
+import LsxContext from '../../util/LsxContext';
+import PageNode from '../PageNode';
 
-import { PagePathWrapper } from './PagePathWrapper';
+import PagePathWrapper from './PagePathWrapper';
 
-export class LsxPage extends React.Component {
+export default class LsxPage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -27,16 +27,16 @@ export class LsxPage extends React.Component {
     const pageNode = this.props.pageNode;
 
     if (pageNode.page !== undefined) {
-      this.setState({isExists: true});
+      this.setState({ isExists: true });
     }
     if (pageNode.children.length > 0) {
-      this.setState({hasChildren: true});
+      this.setState({ hasChildren: true });
     }
 
     // process depth option
     const optDepth = this.props.lsxContext.getOptDepth();
     if (optDepth === undefined) {
-      this.setState({isLinkable: true});
+      this.setState({ isLinkable: true });
     }
     else {
       const depth = this.props.depth;
@@ -45,7 +45,7 @@ export class LsxPage extends React.Component {
       // console.log(pageNode.pagePath, {depth, decGens, 'optDepth.start': optDepth.start, 'optDepth.end': optDepth.end});
 
       const isLinkable = optDepth.start <= depth;
-      this.setState({isLinkable});
+      this.setState({ isLinkable });
     }
   }
 
@@ -58,7 +58,9 @@ export class LsxPage extends React.Component {
     if (this.state.hasChildren) {
       const pages = pageNode.children.map((pageNode) => {
         return (
-          <LsxPage key={pageNode.pagePath} depth={this.props.depth + 1}
+          <LsxPage
+            key={pageNode.pagePath}
+            depth={this.props.depth + 1}
             pageNode={pageNode}
             lsxContext={this.props.lsxContext}
           />
@@ -96,6 +98,7 @@ export class LsxPage extends React.Component {
       </li>
     );
   }
+
 }
 
 LsxPage.propTypes = {

@@ -4,7 +4,7 @@ import { customTagUtils, pathUtils } from 'growi-commons';
 
 const { TagContext, ArgsParser, OptionParser } = customTagUtils;
 
-export class LsxContext extends TagContext {
+export default class LsxContext extends TagContext {
 
   /**
    * @param {object|TagContext|LsxContext} initArgs
@@ -25,9 +25,6 @@ export class LsxContext extends TagContext {
       return;
     }
 
-    // initialize
-    let specifiedPath;
-
     const parsedResult = ArgsParser.parse(this.args);
     this.options = parsedResult.options;
 
@@ -36,10 +33,9 @@ export class LsxContext extends TagContext {
     //   1: lsx(prefix=..., ...)
     //   2: lsx(firstArgs, ...)
     //   3: fromPagePath
-    specifiedPath =
-        this.options.prefix ||
-        ((parsedResult.firstArgsValue === true) ? parsedResult.firstArgsKey : undefined) ||
-        this.fromPagePath;
+    const specifiedPath = this.options.prefix
+        || ((parsedResult.firstArgsValue === true) ? parsedResult.firstArgsKey : undefined)
+        || this.fromPagePath;
 
     // resolve pagePath
     //   when `fromPagePath`=/hoge and `specifiedPath`=./fuga,
@@ -48,15 +44,15 @@ export class LsxContext extends TagContext {
     //        `pagePath` to be /fuga
     //   when `fromPagePath`=/hoge and `specifiedPath`=undefined,
     //        `pagePath` to be /hoge
-    this.pagePath = (specifiedPath !== undefined) ?
-      decodeURIComponent(url.resolve(pathUtils.addTrailingSlash(this.fromPagePath), specifiedPath)):
-      this.fromPagePath;
+    this.pagePath = (specifiedPath !== undefined)
+      ? decodeURIComponent(url.resolve(pathUtils.addTrailingSlash(this.fromPagePath), specifiedPath))
+      : this.fromPagePath;
 
     this.isParsed = true;
   }
 
   getOptDepth() {
-    if (this.options.depth == undefined) {
+    if (this.options.depth === undefined) {
       return undefined;
     }
     return OptionParser.parseRange(this.options.depth);
