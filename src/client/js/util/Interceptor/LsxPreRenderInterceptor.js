@@ -9,12 +9,6 @@ import LsxCacheHelper from '../LsxCacheHelper';
  */
 export default class LsxPreRenderInterceptor extends BasicInterceptor {
 
-  constructor(crowi) {
-    super();
-    this.crowi = crowi;
-    this.crowiForJquery = crowi.getCrowiForJquery();
-  }
-
   /**
    * @inheritdoc
    */

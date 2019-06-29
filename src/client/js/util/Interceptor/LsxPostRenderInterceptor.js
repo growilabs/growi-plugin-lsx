@@ -13,9 +13,9 @@ import Lsx from '../../components/Lsx';
  */
 export default class LsxPostRenderInterceptor extends BasicInterceptor {
 
-  constructor(crowi) {
+  constructor(appContainer) {
     super();
-    this.crowi = crowi;
+    this.appContainer = appContainer;
   }
 
   /**
@@ -54,7 +54,7 @@ export default class LsxPostRenderInterceptor extends BasicInterceptor {
 
   renderReactDOM(lsxContext, elem) {
     ReactDOM.render(
-      <Lsx crowi={this.crowi} lsxContext={lsxContext} />,
+      <Lsx appContainer={this.appContainer} lsxContext={lsxContext} />,
       elem,
     );
   }
