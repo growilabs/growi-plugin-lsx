@@ -9,7 +9,7 @@ import { pathUtils } from 'growi-commons';
 import styles from '../../css/index.css';
 
 import LsxContext from '../util/LsxContext';
-import LsxCacheHelper from '../util/LsxCacheHelper';
+import TagCacheManagerFactory from '../util/TagCacheManagerFactory';
 import PageNode from './PageNode';
 import LsxListView from './LsxPageList/LsxListView';
 
@@ -24,6 +24,8 @@ export default class Lsx extends React.Component {
       nodeTree: undefined,
       errorMessage: '',
     };
+
+    this.tagCacheManager = TagCacheManagerFactory.getInstance();
   }
 
   // eslint-disable-next-line react/no-deprecated
@@ -31,7 +33,13 @@ export default class Lsx extends React.Component {
     const lsxContext = this.props.lsxContext;
 
     // get state object cache
-    const stateCache = LsxCacheHelper.getStateCache(lsxContext);
+    const stateCache = this.tagCacheManager.getStateCache(lsxContext);
+    if (stateCache != null && stateCache.nodeTree != null) {
+      // instanciate PageNode
+      stateCache.nodeTree = stateCache.nodeTree.map((obj) => {
+        return PageNode.instanciateFrom(obj);
+      });
+    }
 
     // check cache exists
     if (stateCache != null) {
@@ -68,7 +76,7 @@ export default class Lsx extends React.Component {
         this.setState({ isLoading: false });
 
         // store to sessionStorage
-        LsxCacheHelper.cacheState(lsxContext, this.state);
+        this.tagCacheManager.cacheState(lsxContext, this.state);
       });
   }
 

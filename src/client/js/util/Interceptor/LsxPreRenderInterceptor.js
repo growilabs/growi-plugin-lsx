@@ -1,6 +1,6 @@
 import { customTagUtils, BasicInterceptor } from 'growi-commons';
 
-import LsxCacheHelper from '../LsxCacheHelper';
+import TagCacheManagerFactory from '../TagCacheManagerFactory';
 
 /**
  * The interceptor for lsx
@@ -50,7 +50,7 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
    */
   initializeCache(contextName) {
     if (contextName === 'preRenderHtml') {
-      LsxCacheHelper.clearAllStateCaches();
+      TagCacheManagerFactory.getInstance().clearAllStateCaches();
     }
   }
 
