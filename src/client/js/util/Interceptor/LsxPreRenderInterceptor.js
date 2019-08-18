@@ -22,18 +22,23 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
   /**
    * @inheritdoc
    */
+  isProcessableParallel() {
+    return false;
+  }
+
+  /**
+   * @inheritdoc
+   */
   process(contextName, ...args) {
     const context = Object.assign(args[0]); // clone
     const parsedHTML = context.parsedHTML;
     this.initializeCache(contextName);
 
-    context.lsxContextMap = {};
-
     const tagPattern = /ls|lsx/;
     const result = customTagUtils.findTagAndReplace(tagPattern, parsedHTML);
 
     context.parsedHTML = result.html;
-    context.tagContextMap = result.tagContextMap;
+    context.lsxContextMap = result.tagContextMap;
 
     // resolve
     return Promise.resolve(context);
