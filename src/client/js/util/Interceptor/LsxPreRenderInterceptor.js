@@ -29,7 +29,7 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
   /**
    * @inheritdoc
    */
-  process(contextName, ...args) {
+  async process(contextName, ...args) {
     const context = Object.assign(args[0]); // clone
     const parsedHTML = context.parsedHTML;
     this.initializeCache(contextName);
@@ -41,7 +41,7 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
     context.lsxContextMap = result.tagContextMap;
 
     // resolve
-    return Promise.resolve(context);
+    return context;
   }
 
   /**

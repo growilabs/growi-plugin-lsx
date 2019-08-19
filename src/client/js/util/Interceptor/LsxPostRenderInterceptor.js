@@ -31,7 +31,7 @@ export default class LsxPostRenderInterceptor extends BasicInterceptor {
   /**
    * @inheritdoc
    */
-  process(contextName, ...args) {
+  async process(contextName, ...args) {
     const context = Object.assign(args[0]); // clone
 
     // forEach keys of lsxContextMap
@@ -47,7 +47,7 @@ export default class LsxPostRenderInterceptor extends BasicInterceptor {
       }
     });
 
-    return Promise.resolve();
+    return;
   }
 
   renderReactDOM(lsxContext, elem) {
