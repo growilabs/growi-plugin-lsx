@@ -37,7 +37,7 @@ TODO
 - [x] impl `num` option
 - [x] impl `sort` option
 - [x] impl `reverse` option
-- [ ] impl `except` option
+- [x] impl `except` option
 - [x] impl `filter` option
 
 [GROWI]: https://github.com/weseek/growi
