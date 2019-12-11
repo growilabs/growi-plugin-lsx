@@ -77,11 +77,12 @@ class Lsx {
    * @param {any} query
    * @param {any} pagePath
    * @param {any} optionsFilter
+   * @param {boolean} isExceptFilter
    * @returns
    *
    * @memberOf Lsx
    */
-  static addFilterCondition(query, pagePath, optionsFilter) {
+  static addFilterCondition(query, pagePath, optionsFilter, isExceptFilter = false) {
     // when option strings is 'filter=', the option value is true
     if (optionsFilter == null || optionsFilter === true) {
       throw new Error('filter option require value in regular expression.');
@@ -95,9 +96,19 @@ class Lsx {
     else {
       filterPath = new RegExp(`^${pagePath}.*${optionsFilter}`);
     }
+
+    if (isExceptFilter) {
+      return query.and({
+        path: { $not: filterPath },
+      });
+    }
     return query.and({
       path: filterPath,
     });
+  }
+
+  static addExceptCondition(query, pagePath, optionsFilter) {
+    return this.addFilterCondition(query, pagePath, optionsFilter, true);
   }
 
   /**
@@ -196,6 +207,9 @@ module.exports = (crowi, app) => {
       // filter
       if (options.filter != null) {
         query = Lsx.addFilterCondition(query, pagePath, options.filter);
+      }
+      if (options.except != null) {
+        query = Lsx.addExceptCondition(query, pagePath, options.except);
       }
       // sort
       query = Lsx.addSortCondition(query, pagePath, options.sort, options.reverse);
