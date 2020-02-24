@@ -1,7 +1,5 @@
 import { customTagUtils, BasicInterceptor } from 'growi-commons';
 
-import TagCacheManagerFactory from '../TagCacheManagerFactory';
-
 /**
  * The interceptor for lsx
  *
@@ -32,7 +30,6 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
   async process(contextName, ...args) {
     const context = Object.assign(args[0]); // clone
     const parsedHTML = context.parsedHTML;
-    this.initializeCache(contextName);
 
     const tagPattern = /ls|lsx/;
     const result = customTagUtils.findTagAndReplace(tagPattern, parsedHTML);
@@ -42,21 +39,6 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
 
     // resolve
     return context;
-  }
-
-  /**
-   * initialize cache
-   *  when contextName is 'preRenderHtml'         -> clear cache
-   *  when contextName is 'preRenderPreviewHtml'  -> doesn't clear cache
-   *
-   * @param {string} contextName
-   *
-   * @memberOf LsxPreRenderInterceptor
-   */
-  initializeCache(contextName) {
-    if (contextName === 'preRenderHtml') {
-      TagCacheManagerFactory.getInstance().clearAllStateCaches();
-    }
   }
 
 }

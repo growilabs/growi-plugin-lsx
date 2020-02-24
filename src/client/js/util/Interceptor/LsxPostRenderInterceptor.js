@@ -51,8 +51,10 @@ export default class LsxPostRenderInterceptor extends BasicInterceptor {
   }
 
   renderReactDOM(lsxContext, elem) {
+    const isPreview = (lsxContext.contextName === 'postRenderPreviewHtml');
+
     ReactDOM.render(
-      <Lsx appContainer={this.appContainer} lsxContext={lsxContext} />,
+      <Lsx appContainer={this.appContainer} lsxContext={lsxContext} forceToFetchData={!isPreview} />,
       elem,
     );
   }

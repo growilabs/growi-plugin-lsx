@@ -19,7 +19,7 @@ export default class Lsx extends React.Component {
     super(props);
 
     this.state = {
-      isLoading: true,
+      isLoading: false,
       isError: false,
       nodeTree: undefined,
       errorMessage: '',
@@ -28,31 +28,27 @@ export default class Lsx extends React.Component {
     this.tagCacheManager = TagCacheManagerFactory.getInstance();
   }
 
-  // eslint-disable-next-line react/no-deprecated
   componentWillMount() {
-    const lsxContext = this.props.lsxContext;
+    const { lsxContext, forceToFetchData } = this.props;
 
     // get state object cache
-    const stateCache = this.tagCacheManager.getStateCache(lsxContext);
-    if (stateCache != null && stateCache.nodeTree != null) {
-      // instanciate PageNode
-      stateCache.nodeTree = stateCache.nodeTree.map((obj) => {
-        return PageNode.instanciateFrom(obj);
-      });
-    }
+    const stateCache = this.retrieveDataFromCache();
 
-    // check cache exists
     if (stateCache != null) {
       this.setState({
-        isLoading: false,
         nodeTree: stateCache.nodeTree,
         isError: stateCache.isError,
         errorMessage: stateCache.errorMessage,
       });
-      return; // go to render()
+
+      // switch behavior by forceToFetchData
+      if (!forceToFetchData) {
+        return; // go to render()
+      }
     }
 
     lsxContext.parse();
+    this.setState({ isLoading: true });
 
     // add slash ensure not to forward match to another page
     // ex: '/Java/' not to match to '/JavaScript'
@@ -78,6 +74,22 @@ export default class Lsx extends React.Component {
         // store to sessionStorage
         this.tagCacheManager.cacheState(lsxContext, this.state);
       });
+  }
+
+  retrieveDataFromCache() {
+    const { lsxContext } = this.props;
+
+    // get state object cache
+    const stateCache = this.tagCacheManager.getStateCache(lsxContext);
+
+    // instanciate PageNode
+    if (stateCache != null && stateCache.nodeTree != null) {
+      stateCache.nodeTree = stateCache.nodeTree.map((obj) => {
+        return PageNode.instanciateFrom(obj);
+      });
+    }
+
+    return stateCache;
   }
 
   /**
@@ -213,4 +225,6 @@ export default class Lsx extends React.Component {
 Lsx.propTypes = {
   appContainer: PropTypes.object.isRequired,
   lsxContext: PropTypes.instanceOf(LsxContext).isRequired,
+
+  forceToFetchData: PropTypes.bool,
 };
