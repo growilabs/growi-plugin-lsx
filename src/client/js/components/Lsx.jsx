@@ -29,7 +29,7 @@ export default class Lsx extends React.Component {
     this.tagCacheManager = TagCacheManagerFactory.getInstance();
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const { lsxContext, forceToFetchData } = this.props;
 
     // get state object cache
@@ -56,26 +56,23 @@ export default class Lsx extends React.Component {
     // ex: '/Java/' not to match to '/JavaScript'
     const pagePath = pathUtils.addTrailingSlash(lsxContext.pagePath);
 
-    this.props.appContainer.apiGet('/plugins/lsx', { pagePath, options: lsxContext.options })
-      .then((res) => {
-        if (res.ok) {
-          const nodeTree = this.generatePageNodeTree(pagePath, res.pages);
-          this.setState({ nodeTree });
-        }
-        else {
-          return Promise.reject(res.error);
-        }
-      })
-      .catch((error) => {
-        this.setState({ isError: true, errorMessage: error.message });
-      })
-      // finally
-      .then(() => {
-        this.setState({ isLoading: false });
+    try {
+      const res = await this.props.appContainer.apiGet('/plugins/lsx', { pagePath, options: lsxContext.options });
 
-        // store to sessionStorage
-        this.tagCacheManager.cacheState(lsxContext, this.state);
-      });
+      if (res.ok) {
+        const nodeTree = this.generatePageNodeTree(pagePath, res.pages);
+        this.setState({ nodeTree });
+      }
+    }
+    catch (error) {
+      this.setState({ isError: true, errorMessage: error.message });
+    }
+    finally {
+      this.setState({ isLoading: false });
+
+      // store to sessionStorage
+      this.tagCacheManager.cacheState(lsxContext, this.state);
+    }
   }
 
   retrieveDataFromCache() {
