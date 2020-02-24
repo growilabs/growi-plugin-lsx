@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import { customTagUtils, BasicInterceptor } from 'growi-commons';
 
 /**
@@ -6,6 +7,12 @@ import { customTagUtils, BasicInterceptor } from 'growi-commons';
  *  replace lsx tag to a React target element
  */
 export default class LsxPreRenderInterceptor extends BasicInterceptor {
+
+  constructor() {
+    super();
+
+    this.previousPreviewContext = null;
+  }
 
   /**
    * @inheritdoc
@@ -37,8 +44,25 @@ export default class LsxPreRenderInterceptor extends BasicInterceptor {
     context.parsedHTML = result.html;
     context.lsxContextMap = result.tagContextMap;
 
+    // unmount
+    if (contextName === 'preRenderPreviewHtml') {
+      this.unmountPreviousReactDOMs(context);
+    }
+
     // resolve
     return context;
+  }
+
+  unmountPreviousReactDOMs(newContext) {
+    if (this.previousPreviewContext != null) {
+      // forEach keys of lsxContextMap
+      Object.keys(this.previousPreviewContext.lsxContextMap).forEach((domId) => {
+        const elem = document.getElementById(domId);
+        ReactDOM.unmountComponentAtNode(elem);
+      });
+    }
+
+    this.previousPreviewContext = newContext;
   }
 
 }
