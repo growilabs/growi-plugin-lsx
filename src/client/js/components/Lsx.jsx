@@ -21,6 +21,7 @@ export default class Lsx extends React.Component {
     this.state = {
       isLoading: false,
       isError: false,
+      isCacheExists: false,
       nodeTree: undefined,
       errorMessage: '',
     };
@@ -36,6 +37,7 @@ export default class Lsx extends React.Component {
 
     if (stateCache != null) {
       this.setState({
+        isCacheExists: true,
         nodeTree: stateCache.nodeTree,
         isError: stateCache.isError,
         errorMessage: stateCache.errorMessage,
@@ -193,16 +195,9 @@ export default class Lsx extends React.Component {
 
   renderContents() {
     const lsxContext = this.props.lsxContext;
+    const { isLoading, isError, isCacheExists } = this.state;
 
-    if (this.state.isLoading) {
-      return (
-        <div className="text-muted">
-          <i className="fa fa-spinner fa-pulse mr-1"></i>
-          <span className="lsx-blink">{lsxContext.tagExpression}</span>
-        </div>
-      );
-    }
-    if (this.state.isError) {
+    if (isError) {
       return (
         <div className="text-warning">
           <i className="fa fa-exclamation-triangle fa-fw"></i>
@@ -210,9 +205,19 @@ export default class Lsx extends React.Component {
         </div>
       );
     }
-    // render tree
 
-    return <LsxListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />;
+    return (
+      <div className={isLoading ? 'lsx-blink' : ''}>
+        { isLoading && (
+          <div className="text-muted">
+            <i className="fa fa-spinner fa-pulse mr-1"></i>
+            {lsxContext.tagExpression}
+            { isCacheExists && <small>&nbsp;(Showing cache..)</small> }
+          </div>
+        ) }
+        <LsxListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />
+      </div>
+    );
 
   }
 

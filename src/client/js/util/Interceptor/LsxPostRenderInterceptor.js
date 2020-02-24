@@ -34,6 +34,8 @@ export default class LsxPostRenderInterceptor extends BasicInterceptor {
   async process(contextName, ...args) {
     const context = Object.assign(args[0]); // clone
 
+    const isPreview = (contextName === 'postRenderPreviewHtml');
+
     // forEach keys of lsxContextMap
     Object.keys(context.lsxContextMap).forEach((domId) => {
       const elem = document.getElementById(domId);
@@ -43,16 +45,14 @@ export default class LsxPostRenderInterceptor extends BasicInterceptor {
         const lsxContext = new LsxContext(context.lsxContextMap[domId] || {});
         lsxContext.fromPagePath = context.currentPagePath;
 
-        this.renderReactDOM(lsxContext, elem);
+        this.renderReactDOM(lsxContext, elem, isPreview);
       }
     });
 
     return;
   }
 
-  renderReactDOM(lsxContext, elem) {
-    const isPreview = (lsxContext.contextName === 'postRenderPreviewHtml');
-
+  renderReactDOM(lsxContext, elem, isPreview) {
     ReactDOM.render(
       <Lsx appContainer={this.appContainer} lsxContext={lsxContext} forceToFetchData={!isPreview} />,
       elem,
