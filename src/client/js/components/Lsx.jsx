@@ -192,7 +192,9 @@ export default class Lsx extends React.Component {
 
   renderContents() {
     const lsxContext = this.props.lsxContext;
-    const { isLoading, isError, isCacheExists } = this.state;
+    const {
+      isLoading, isError, isCacheExists, nodeTree,
+    } = this.state;
 
     if (isError) {
       return (
@@ -203,6 +205,7 @@ export default class Lsx extends React.Component {
       );
     }
 
+
     return (
       <div className={isLoading ? 'lsx-blink' : ''}>
         { isLoading && (
@@ -212,7 +215,9 @@ export default class Lsx extends React.Component {
             { isCacheExists && <small>&nbsp;(Showing cache..)</small> }
           </div>
         ) }
-        <LsxListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />
+        { nodeTree && (
+          <LsxListView nodeTree={this.state.nodeTree} lsxContext={this.props.lsxContext} />
+        ) }
       </div>
     );
 
