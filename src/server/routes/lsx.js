@@ -2,6 +2,9 @@ const { customTagUtils } = require('growi-commons');
 
 const { OptionParser } = customTagUtils;
 
+
+const DEFAULT_PAGES_NUM = 50;
+
 class Lsx {
 
   /**
@@ -45,7 +48,7 @@ class Lsx {
    * @static
    * @param {any} query
    * @param {any} pagePath
-   * @param {any} optionsNum
+   * @param {number|string} optionsNum
    * @returns
    *
    * @memberOf Lsx
@@ -54,6 +57,10 @@ class Lsx {
     // when option strings is 'num=', the option value is true
     if (optionsNum == null || optionsNum === true) {
       throw new Error('The value of num option is invalid.');
+    }
+
+    if (typeof optionsNum === 'number') {
+      return query.limit(optionsNum + 1); // add 1 because the item which path is pagePath will not displaying
     }
 
     const range = OptionParser.parseRange(optionsNum);
@@ -65,7 +72,7 @@ class Lsx {
     }
 
     const skip = start - 1;
-    const limit = end - skip;
+    const limit = end - skip + 1; // add 1 because the item which path is pagePath will not displaying
 
     return query.skip(skip).limit(limit);
   }
@@ -200,10 +207,6 @@ module.exports = (crowi, app) => {
       if (options.depth != null) {
         query = Lsx.addDepthCondition(query, pagePath, options.depth);
       }
-      // num
-      if (options.num != null) {
-        query = Lsx.addNumCondition(query, pagePath, options.num);
-      }
       // filter
       if (options.filter != null) {
         query = Lsx.addFilterCondition(query, pagePath, options.filter);
@@ -211,6 +214,9 @@ module.exports = (crowi, app) => {
       if (options.except != null) {
         query = Lsx.addExceptCondition(query, pagePath, options.except);
       }
+      // num
+      const optionsNum = options.num || DEFAULT_PAGES_NUM;
+      query = Lsx.addNumCondition(query, pagePath, optionsNum);
       // sort
       query = Lsx.addSortCondition(query, pagePath, options.sort, options.reverse);
 
