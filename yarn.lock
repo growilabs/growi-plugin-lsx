@@ -1167,10 +1167,10 @@ graceful-fs@^4.1.2:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
-growi-commons@^4.0.8:
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/growi-commons/-/growi-commons-4.0.8.tgz#3040f2759f5eb13084b101e303c11028af2a8faf"
-  integrity sha512-AL/vm3R3LqiWwCbuEHPsDP8hapiz7ulKZXyW4399WHorx/7oEkSWb6sGdkvJiqSnRWxEcdPkfw6K0kgzilMpig==
+growi-commons@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/growi-commons/-/growi-commons-5.0.2.tgz#bac05e356787c1855920c81e57e73991f4c5fa3d"
+  integrity sha512-SUCgf4ZhA+qfNhianeoJXrHzIuu2cmcR2jkOyIpGO/dgddffIj5lTYwfmjUEO7DWLfY76es5smXLTOvoACeyGQ==
 
 has-ansi@^2.0.0:
   version "2.0.0"
