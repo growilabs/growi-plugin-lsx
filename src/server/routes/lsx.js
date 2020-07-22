@@ -60,7 +60,7 @@ class Lsx {
     }
 
     if (typeof optionsNum === 'number') {
-      return query.limit(optionsNum + 1); // add 1 because the item which path is pagePath will not displaying
+      return query.limit(optionsNum);
     }
 
     const range = OptionParser.parseRange(optionsNum);
@@ -72,7 +72,7 @@ class Lsx {
     }
 
     const skip = start - 1;
-    const limit = end - skip + 1; // add 1 because the item which path is pagePath will not displaying
+    const limit = end - skip;
 
     return query.skip(skip).limit(limit);
   }
@@ -187,7 +187,14 @@ module.exports = (crowi, app) => {
     }
 
     const builder = new Page.PageQueryBuilder(baseQuery);
-    builder.addConditionToListWithDescendants(pagePath, {})
+    if (builder.addConditionToListOnlyDescendants == null) { // for Backward compatibility (<= GROWI v4.0.x)
+      builder.addConditionToListWithDescendants(pagePath);
+    }
+    else {
+      builder.addConditionToListOnlyDescendants(pagePath);
+    }
+
+    builder
       .addConditionToExcludeTrashed()
       .addConditionToExcludeRedirect();
 
